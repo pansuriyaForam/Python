@@ -114,14 +114,14 @@ The project uses a scalable, enterprise-ready structure:
 
 ### 💡 Interpretation Guide
 Sharpe Ratio
->1.0: Good risk-adjusted returns
->2.0: Excellent performance
->3.0: Exceptional portfolio management
+-> >1.0: Good risk-adjusted returns
+-> >2.0: Excellent performance
+-> >3.0: Exceptional portfolio management
 
 ### Correlation
->0.7: High correlation (limited diversification benefits)
-0.3 - 0.7: Moderate correlation
-<0.3: Low correlation (strong diversification potential)
+-> >0.7: High correlation (limited diversification benefits)
+-> 0.3 - 0.7: Moderate correlation
+-> <0.3: Low correlation (strong diversification potential)
 
 ## 🚀 Advanced Applications
 ### Portfolio Optimization
@@ -149,3 +149,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 This software is for educational and research purposes only. It is not financial advice, and users should conduct their own due diligence before making investment decisions. Past performance does not guarantee future results.
 
 Built with ❤️ for the quant finance community
+
