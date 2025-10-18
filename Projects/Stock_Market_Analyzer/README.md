@@ -114,14 +114,14 @@ The project uses a scalable, enterprise-ready structure:
 
 ### 💡 Interpretation Guide
 Sharpe Ratio
-- >1.0: Good risk-adjusted returns
-- >2.0: Excellent performance
-- >3.0: Exceptional portfolio management
+>1.0: Good risk-adjusted returns
+>2.0: Excellent performance
+>3.0: Exceptional portfolio management
 
 ### Correlation
-- >0.7: High correlation (limited diversification benefits)
-- 0.3 - 0.7: Moderate correlation
-- <0.3: Low correlation (strong diversification potential)
+>0.7: High correlation (limited diversification benefits)
+0.3 - 0.7: Moderate correlation
+<0.3: Low correlation (strong diversification potential)
 
 ## 🚀 Advanced Applications
 ### Portfolio Optimization
