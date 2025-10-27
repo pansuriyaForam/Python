@@ -1,4 +1,3 @@
-# app.py (corrected)
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -94,14 +93,15 @@ st.markdown(
 )
 
 def generate_insights(cum_ret, corr_matrix, ann_vol, sharpe, tickers):
-    """Generate textual insights from computed metrics."""
-    insights = []
-    insights.append("## 📊 Cumulative Returns Analysis")
+    """
+    Generate textual insights from computed metrics.
+    """
+    st.subheader("📊 Cumulative Returns Analysis")
 
     # Defensive: ensure cum_ret has rows
     if cum_ret is None or cum_ret.empty:
-        insights.append("No cumulative return data available for insight generation.")
-        return "\n".join(insights)
+        st.error("No cumulative return data available for insight generation.")
+        return "\n"
 
     final_returns = cum_ret.iloc[-1]
     if not final_returns.empty:
@@ -110,31 +110,31 @@ def generate_insights(cum_ret, corr_matrix, ann_vol, sharpe, tickers):
         best_return = final_returns.max() * 100
         worst_return = final_returns.min() * 100
 
-        insights.append("**Performance Summary:**")
-        insights.append(f"- 🏆 **{best_stock}** delivered the highest returns: **{best_return:.1f}%**")
-        insights.append(f"- 📉 **{worst_stock}** showed the lowest returns: **{worst_return:.1f}%**")
+        st.markdown("**Performance Summary:**")
+        st.markdown(f"- 🏆 **{best_stock}** delivered the highest returns: **{best_return:.1f}%**\n")
+        st.markdown(f"- 📉 **{worst_stock}** showed the lowest returns: **{worst_return:.1f}%**")
 
         # Risk-adjusted performance (if sharpe provided)
         if sharpe is not None and not getattr(sharpe, "empty", True):
             best_sharpe = sharpe.idxmax()
-            insights.append(f"- ⚖️ **{best_sharpe}** had the best risk-adjusted returns (Sharpe Ratio)")
+            st.markdown(f"- ⚖️ **{best_sharpe}** had the best risk-adjusted returns (Sharpe Ratio)")
 
     # Volatility
-    insights.append("\n## ⚡ Volatility Analysis")
+    st.subheader("\n ⚡  Volatility Analysis")
     if ann_vol is not None and not getattr(ann_vol, "empty", True):
         highest_vol = ann_vol.idxmax()
         lowest_vol = ann_vol.idxmin()
         vol_range = ann_vol.max() / ann_vol.min() if ann_vol.min() != 0 else np.inf
 
-        insights.append("**Risk Assessment:**")
-        insights.append(f"- 🎢 **{highest_vol}** is the most volatile (highest risk)")
-        insights.append(f"- 🛌 **{lowest_vol}** is the most stable (lowest risk)")
+        st.markdown("**Risk Assessment:**")
+        st.markdown(f"- 🎢 **{highest_vol}** is the most volatile (highest risk)")
+        st.markdown(f"- 🛌 **{lowest_vol}** is the most stable (lowest risk)")
 
         if vol_range > 2:
-            insights.append("- ⚠️ Significant difference in risk profiles - consider diversification")
+            st.info("- ⚠️ Significant difference in risk profiles - consider diversification")
 
     # Correlation
-    insights.append("\n## 🔗 Correlation & Diversification")
+    st.subheader("\n 🔗 Correlation & Diversification")
     if corr_matrix is not None and not corr_matrix.empty and corr_matrix.shape[0] > 1:
         strong_corr_pairs = []
         weak_corr_pairs = []
@@ -153,20 +153,20 @@ def generate_insights(cum_ret, corr_matrix, ann_vol, sharpe, tickers):
                     weak_corr_pairs.append((stock_a, stock_b, corr_value))
 
         if strong_corr_pairs:
-            insights.append("**Strong Correlations (Move Together):**")
+            st.markdown("**Strong Correlations (Move Together):**")
             for stock_a, stock_b, corr_val in strong_corr_pairs[:3]:
-                insights.append(f"- 🔗 **{stock_a}** & **{stock_b}**: {corr_val:.2f} - High co-movement")
+                st.markdown(f"- 🔗 **{stock_a}** & **{stock_b}**: {corr_val:.2f} - High co-movement")
 
         if weak_corr_pairs:
-            insights.append("**Diversification Opportunities:**")
+            st.markdown("**Diversification Opportunities:**")
             for stock_a, stock_b, corr_val in weak_corr_pairs[:3]:
-                insights.append(f"- 🛡️ **{stock_a}** & **{stock_b}**: {corr_val:.2f} - Good for diversification")
+                st.markdown(f"- 🛡️ **{stock_a}** & **{stock_b}**: {corr_val:.2f} - Good for diversification")
 
         if not strong_corr_pairs and not weak_corr_pairs:
-            insights.append("**Moderate correlations** - Balanced portfolio with some diversification benefits")
+            st.markdown("**Moderate correlations** - Balanced portfolio with some diversification benefits")
 
     # Sharpe ratio analysis
-    insights.append("\n## 🎯 Risk-Adjusted Performance")
+    st.subheader("\n 🎯 Risk-Adjusted Performance")
     if sharpe is not None and not getattr(sharpe, "empty", True):
         sharpe_pos = sharpe[sharpe > 0]
         sharpe_neg = sharpe[sharpe < 0]
@@ -174,30 +174,30 @@ def generate_insights(cum_ret, corr_matrix, ann_vol, sharpe, tickers):
         if len(sharpe_pos) > 0:
             best_sharpe_stock = sharpe_pos.idxmax()
             best_sharpe_value = sharpe_pos.max()
-            insights.append("**Positive Risk-Adjusted Returns:**")
-            insights.append(f"- ✅ {len(sharpe_pos)} stocks provided positive risk-adjusted returns")
-            insights.append(f"- 🥇 **{best_sharpe_stock}** has the best Sharpe Ratio: **{best_sharpe_value:.2f}**")
+            st.markdown("**Positive Risk-Adjusted Returns:**")
+            st.markdown(f"- ✅ {len(sharpe_pos)} stocks provided positive risk-adjusted returns")
+            st.markdown(f"- 🥇 **{best_sharpe_stock}** has the best Sharpe Ratio: **{best_sharpe_value:.2f}**")
 
         if len(sharpe_neg) > 0:
-            insights.append("**Caution Required:**")
-            insights.append(f"- ❌ {len(sharpe_neg)} stocks had negative risk-adjusted returns")
+            st.markdown("**Caution Required:**")
+            st.markdown(f"- ❌ {len(sharpe_neg)} stocks had negative risk-adjusted returns")
 
     # Overall portfolio assessment (avg correlation)
-    insights.append("\n## 💼 Overall Portfolio Assessment")
+    st.subheader("\n 💼 Overall Portfolio Assessment")
     if corr_matrix is not None and not corr_matrix.empty and corr_matrix.shape[0] > 1:
         # compute average off-diagonal correlation
         tri_idxs = np.triu_indices_from(corr_matrix.values, k=1)
         if len(tri_idxs[0]) > 0:
             avg_correlation = np.nanmean(corr_matrix.values[tri_idxs])
             if avg_correlation < 0.4:
-                insights.append("**🎉 Excellent Diversification** - Low average correlation provides strong risk reduction")
+                st.markdown("**🎉 Excellent Diversification** - Low average correlation provides strong risk reduction")
             elif avg_correlation < 0.7:
-                insights.append("**👍 Good Diversification** - Moderate correlations offer reasonable risk management")
+                st.markdown("**👍 Good Diversification** - Moderate correlations offer reasonable risk management")
             else:
-                insights.append("**⚠️ Limited Diversification** - High correlations mean stocks tend to move together")
+                st.markdown("**⚠️ Limited Diversification** - High correlations mean stocks tend to move together")
 
     # Investment implications: match returns vs risk
-    insights.append("\n## 💡 Investment Implications")
+    st.subheader("\n 💡 Investment Implications")
     if (final_returns is not None and not getattr(final_returns, "empty", True)
             and ann_vol is not None and not getattr(ann_vol, "empty", True)):
         high_return_high_risk = []
@@ -213,24 +213,23 @@ def generate_insights(cum_ret, corr_matrix, ann_vol, sharpe, tickers):
                     high_return_high_risk.append(ticker)
 
         if high_return_low_risk:
-            insights.append(f"**Quality Picks:** {', '.join(high_return_low_risk)} - High returns with below-average risk")
+            st.markdown(f"**Quality Picks:** {', '.join(high_return_low_risk)} - High returns with below-average risk")
         if high_return_high_risk:
-            insights.append(f"**High-Risk/High-Reward:** {', '.join(high_return_high_risk)} - Potential for high returns but with elevated risk")
+            st.markdown(f"**High-Risk/High-Reward:** {', '.join(high_return_high_risk)} - Potential for high returns but with elevated risk")
 
-    return "\n".join(insights)
+    return "\n"
 
 
 def main():
     st.title("📈 Stock Performance Analytics")
     st.markdown("Analyze cumulative returns, correlations, and risk metrics for multiple stocks.")
-
     st.markdown("---")
     st.subheader("Input Parameters")
 
     # Multi-ticker input
     tickers_input = st.text_input(
-        "Stock Tickers (comma-separated)",
-        value="AAPL, TSLA, MSFT",
+        "Stock Tickers",
+        value="",
         placeholder="e.g., AAPL, MSFT, GOOGL, TSLA",
         help="Enter stock tickers separated by commas"
     )
@@ -338,7 +337,7 @@ def main():
                 # Insights
                 st.markdown("## 🧠 Theoretical Analysis & Insights")
                 insights = generate_insights(cum_ret, corr_matrix, ann_vol, sharpe, list(adj_close.columns))
-                st.markdown(f'<div class="insight-box">{insights}</div>', unsafe_allow_html=True)
+                # st.markdown(f'<div class="insight-box">{insights}</div>', unsafe_allow_html=True)
 
                 # Interpretation helper
                 with st.expander("📖 How to Interpret These Metrics"):
